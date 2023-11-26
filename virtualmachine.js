@@ -1,7 +1,7 @@
 
 
  function vm(data){
-     this.data=data;
+     this.vmdata=data;
      this.ip=0;
      this.stack=new Stack() ;
      this.contractState= {};
@@ -10,52 +10,24 @@
 
  
 
-function Stack(){
-    this.stack=[];
-    this.sp=0;
-    this.stackBytes=[];
-    
-}
-
-Stack.prototype.push=function(number){
-    this.stack.push(number);
-    this.sp++;
-    console.log(this.stack);
-
-}
-
-Stack.prototype.pop=function(){
-
-    this.stack.pop();
-    this.sp--;
-    console.log(this.stack);
-
-}
 
 
 
 
  vm.prototype.runVm=function(){
 
-    
-
-    this.data.forEach((instr)=>
+   this.data.forEach((instr)=>
     {
         
         instruction=Instructions[instr];
         
         if(instruction){
             this.executevminstruction(instruction);
-            
-            
         }
-
-        
-        this.ip++;
-
+     this.ip++; 
     })
-      
- }
+}
+
 
  vm.prototype.executevminstruction=function(instruction){
      let a;
@@ -166,6 +138,31 @@ Stack.prototype.pop=function(){
     return packedByteString;
 
  }
+
+
+
+ function Stack(){
+    this.stack=[];
+    this.sp=0;
+    this.stackBytes=[];
+    
+}
+
+Stack.prototype.push=function(number){
+    this.stack.push(number);
+    this.sp++;
+    console.log(this.stack);
+
+}
+
+Stack.prototype.pop=function(){
+
+    this.stack.pop();
+    this.sp--;
+    console.log(this.stack);
+
+}
+
  
 
 
