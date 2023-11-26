@@ -7,15 +7,15 @@ function Blockchain(){
 }
 
 
-Blockchain.prototype.createNewBlock= function(prevHash,currentHash,nonce){
+Blockchain.prototype.createNewBlock= function(Block){
 
     const newBlock={
     
-        previousBlockHash:prevHash,
+        previousBlockHash:Block.previousblockHash,
         timestamp:Date.now(),
         transactions: this.pendingtransactions,
-        currentBlockHash:currentHash,
-        nonce:nonce
+        currentBlockHash:Block.currentBlockHash,
+        nonce:Block.nonce
 
     }
 
@@ -26,46 +26,27 @@ Blockchain.prototype.createNewBlock= function(prevHash,currentHash,nonce){
 }
 
 
-Blockchain.prototype.createNewTransaction=function(from, to, value){
+Blockchain.prototype.addNewTransaction=function(transaction){
 
-    const transaction={
-        from:from,
-        to:to,
-        value:value
-    }
-
-    this.pendingtransactions.push(transaction);
-
-
-}
-Blockchain.prototype.getLatestBlock=function(){
-    return this.chains[this.chains.length-1];
-}
-
-
-Blockchain.prototype.hashBlockdata=function(prevBlockHash,transactionData,nonce){
-    const dataAsaString= prevBlockHash + JSON.stringify(transactionData)+nonce.toString();
-    const hash = createHash('sha256');
-
-    const dataHash=hash.update(dataAsaString).digest('hex');
-    
-
-    return dataHash;
-
+    this.pendingtransactions.push(transactiondata);
 
 
 }
 
 
-Blockchain.prototype.proofOfwork=function(prevHash,transactiondata){
+
+
+
+
+Blockchain.prototype.proofOfwork=function(previousBlockHash){
 
     let nonce=0;
-    let Hash=this.hashBlockdata(prevHash,transactiondata,nonce).toString();
+    let Hash=this.hashBlock({previousBlockHash:previousBlockHash,blocktransactions:this.pendingtransactions,nonce:nonce}).toString();
 
     while(Hash.substring(0,4) !==000)
     {
         nonce++;
-        let Hash=this.hashBlockdata(prevHash,transactiondata,nonce).toString();
+        let Hash=this.hashBlock({previousBlockHash:previousBlockHash,blocktransactions:this.pendingtransactions,nonce:nonce}).toString();
         
         
     }
@@ -73,16 +54,42 @@ Blockchain.prototype.proofOfwork=function(prevHash,transactiondata){
 
 }
 
+Blockchain.prototype.hashBlock=function(block){
+    const blockdataAsString= block.previousBlockHash + JSON.stringify(block.blocktransactions)+block.nonce.toString();
+    const hash = createHash('sha256');
+
+    const newBlockHash=hash.update(blockdataAsString).digest('hex');
+    
+
+    return newBlockHash;
 
 
-// Testing
+
+}
+
+
+Blockchain.prototype.getLatestBlock=function(){
+    return this.chains[this.chains.length-1];
+}
+
+
+
+
 
 const bitcoin=new Blockchain();
 
-bitcoin.createNewTransaction({from:"sender",to:"target",value:23});
-const nonce=bitcoin.proofOfwork("fghj",this.pendingtransactions)
-const Hash=bitcoin.hashBlockdata("fghj",this.pendingtransactions,nonce);
-bitcoin.createNewBlock("fghj",Hash,nonce);
+
+const transaction={from:"sender",to:"target",value:23};
+bitcoin.createNewTransaction(transaction);
+
+
+const Blocknonce=bitcoin.proofOfwork({previousBlockHash:"fghj"});
+const Blockdata={previousBlockHash:"fghj",blocktransactions:this.pendingtransactions,nonce:Blocknonce};
+const BlockHash=bitcoin.hashBlock(Blockdata);
+
+
+const Block={previousBlockHash:"fghj",currentBlockHash:BlockHash,nonce:Blocknonce};
+bitcoin.createNewBlock(Block);
 
 
 console.log(bitcoin);
