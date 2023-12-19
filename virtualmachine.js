@@ -8,7 +8,6 @@ function vm(data) {
 vm.prototype.runVm = function () {
   this.vmdata.forEach((instr) => {
     instruction = Instructions[instr];
-
     if (instruction) {
       this.executevminstruction(instruction);
     }
@@ -28,9 +27,8 @@ vm.prototype.executevminstruction = function (instruction) {
     case "PUSH":
       this.sp++;
       this.stack.push(this.vmdata[this.ip - 1].toString());
-
       break;
-
+    
     case "ADD":
       lastTwoElements = this.getLastTwoElements();
       c = lastTwoElements.a + lastTwoElements.b;
@@ -44,13 +42,11 @@ vm.prototype.executevminstruction = function (instruction) {
 
     case "PackBytes":
       let packedByteString = this.getStringFromBytes();
-
       this.stack.push(packedByteString);
-
       this.stack.stackBytes = [];
-
       this.sp++;
       break;
+      
     case "SUB":
       lastTwoElements = this.getLastTwoElements();
       c = lastTwoElements.a + lastTwoElements.b;
@@ -60,22 +56,15 @@ vm.prototype.executevminstruction = function (instruction) {
 
     case "StoreState":
       let key = this.stack.stack[this.stack.sp - 1];
-
       let value = this.stack.stack[this.stack.sp - 1];
-
       this.contractState[key] = value;
-
       break;
 
     case "getState":
       let statekey = this.stack.stack[this.stack.sp - 1];
-
       statevalue = this.contractState[statekey];
-
       this.stack.pop();
-
       this.stack.push(statevalue);
-
       break;
 
     case "MUL":
@@ -96,7 +85,6 @@ vm.prototype.executevminstruction = function (instruction) {
 
 vm.prototype.getStringFromBytes = function () {
   let packedByteString = "";
-
   this.stack.stackBytes.forEach((byte) => {
     packedByteString = packedByteString + byte.toString();
   });
@@ -138,7 +126,3 @@ const Instructions = {
 // Testing arithmetic operations
 const newvm = new vm([2, "0x0a", 4, "0x0a", "0x0b"]);
 newvm.runVm();
-//  console.log(newvm.contractState);
-//  console.log(newvm.stack.stack);
-
-// How can we push bytes
